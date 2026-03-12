@@ -37,7 +37,7 @@ history.json
 .env.*.local
 *.key
 *.pem
-secrets.*
+secrets.toml
 credentials.json
 config.local.*
 
