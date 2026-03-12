@@ -31,6 +31,16 @@ ENV/
 # 历史记录
 history.json
 
+# 环境变量和敏感信息
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets.*
+credentials.json
+config.local.*
+
 # IDE
 .vscode/
 .idea/
