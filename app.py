@@ -136,7 +136,7 @@ def generate_test_cases(content, test_type, api_key):
     message_content = f"{prompt_instruction}\n\n## 需求文档内容\n\n{content}"
 
     response = client.chat.completions.create(
-        model="llama-3.1-70b-versatile",
+        model="llama-3.3-70b-versatile",
         messages=[
             {
                 "role": "system",
