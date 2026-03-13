@@ -107,6 +107,7 @@ def generate_test_cases(content, test_type, api_key):
 3. 每个用例必须包含：用例ID、用例标题、测试类型、前置条件、测试步骤、测试数据、预期结果、优先级
 4. 输出为 Markdown 表格格式
 5. 所有内容使用中文
+6. **重要：只输出表格，不要有任何标题、分析说明或总结文字**
 
 输出格式示例：
 | 用例ID | 用例标题 | 测试类型 | 前置条件 | 测试步骤 | 测试数据 | 预期结果 | 优先级 |
@@ -247,10 +248,9 @@ with col1:
     st.subheader("📄 上传需求文档")
 
     uploaded_file = st.file_uploader(
-        "选择文档",
+        "上传需求文档",
         type=['txt', 'md', 'pdf', 'docx'],
-        label_visibility="collapsed",
-        help="支持 Word、PDF、TXT、Markdown 格式"
+        help="支持格式：Word、PDF、TXT、Markdown"
     )
 
     # 显示文档内容预览
