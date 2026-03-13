@@ -91,13 +91,14 @@ def generate_test_cases(content, test_type, api_key):
 2. **不限制数量**：根据需求的复杂程度生成测试用例，简单功能可能5-10条，复杂功能可能20-50条，不要人为限制在固定数量
 3. **场景完整**：覆盖正常流程、基本异常流程、边界情况
 4. 每个用例必须包含：用例ID、用例标题、前置条件、测试步骤、预期结果、优先级
-5. 输出为 Markdown 表格格式
-6. 所有内容使用中文
+5. **用例ID格式**：使用阿拉伯数字从1开始递增（1, 2, 3...），不要使用 TC-001 这种格式
+6. 输出为 Markdown 表格格式
+7. 所有内容使用中文
 
 输出格式示例：
 | 用例ID | 用例标题 | 前置条件 | 测试步骤 | 预期结果 | 优先级 |
 |--------|---------|---------|---------|---------|--------|
-| TC-001 | 用户登录 | 用户已注册 | 1. 打开登录页面<br>2. 输入用户名和密码<br>3. 点击登录按钮 | 登录成功，跳转到首页 | 高 |
+| 1 | 用户登录 | 用户已注册 | 1. 打开登录页面<br>2. 输入用户名和密码<br>3. 点击登录按钮 | 登录成功，跳转到首页 | 高 |
 """
     elif test_type == "全面测试（含边界/异常）":
         prompt_instruction = """
@@ -108,9 +109,10 @@ def generate_test_cases(content, test_type, api_key):
 2. **多维测试**：包含功能测试、边界值测试、异常场景测试、接口测试等
 3. **不限制数量**：根据需求复杂程度生成，不要人为限制数量，确保测试覆盖完整
 4. 每个用例必须包含：用例ID、用例标题、测试类型、前置条件、测试步骤、测试数据、预期结果、优先级
-5. 输出为 Markdown 表格格式
-6. 所有内容使用中文
-7. **重要：只输出表格，不要有任何标题、分析说明或总结文字**
+5. **用例ID格式**：使用阿拉伯数字从1开始递增（1, 2, 3...），不要使用 TC-001 这种格式
+6. 输出为 Markdown 表格格式
+7. 所有内容使用中文
+8. **重要：只输出表格，不要有任何标题、分析说明或总结文字**
 
 输出格式示例：
 | 用例ID | 用例标题 | 测试类型 | 前置条件 | 测试步骤 | 测试数据 | 预期结果 | 优先级 |
@@ -125,9 +127,10 @@ def generate_test_cases(content, test_type, api_key):
 2. **风险评估**：识别需求中的风险点和关键功能
 3. **不限制数量**：根据需求复杂程度和风险评估，生成完整的测试用例集
 4. 每个用例必须包含：用例ID、用例标题、测试类型、前置条件、测试步骤、测试数据、预期结果、优先级、状态、备注
-5. 输出为 Markdown 表格格式
-6. 在开头提供测试分析总结
-7. 所有内容使用中文
+5. **用例ID格式**：使用阿拉伯数字从1开始递增（1, 2, 3...），不要使用 TC-001 这种格式
+6. 输出为 Markdown 表格格式
+7. 在开头提供测试分析总结
+8. 所有内容使用中文
 
 输出格式示例：
 ## 测试分析总结
@@ -171,7 +174,9 @@ def markdown_to_excel(markdown_content):
                 if not headers and all(cell and not cell.startswith('---') for cell in cells):
                     headers = cells
                 elif not any(cell.startswith('---') for cell in cells):
-                    table_data.append(cells)
+                    # 处理 <br> 标签，替换为换行符
+                    processed_cells = [cell.replace('<br>', '\n') for cell in cells]
+                    table_data.append(processed_cells)
 
     if table_data and headers:
         # 确保所有数据行的列数与表头一致
@@ -184,6 +189,11 @@ def markdown_to_excel(markdown_content):
         output = io.BytesIO()
         with pd.ExcelWriter(output, engine='openpyxl') as writer:
             df.to_excel(writer, index=False, sheet_name='测试用例')
+            # 设置单元格自动换行
+            worksheet = writer.sheets['测试用例']
+            for row in worksheet.iter_rows():
+                for cell in row:
+                    cell.alignment = cell.alignment.copy(wrap_text=True)
         output.seek(0)
         return output
     return None
